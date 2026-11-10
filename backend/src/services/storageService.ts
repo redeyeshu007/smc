@@ -177,6 +177,35 @@ export class StorageService {
       await fs.unlink(localFilePath).catch(() => {});
     }
   }
+
+  /**
+   * Deletes a file from storage given its public URL or path
+   */
+  async deleteFileFromUrl(fileUrl?: string): Promise<void> {
+    if (!fileUrl) return;
+    try {
+      const publicDomain = env.S3_PUBLIC_DOMAIN.replace(/\/$/, '');
+      let key = '';
+
+      if (fileUrl.startsWith(publicDomain)) {
+        key = fileUrl.replace(`${publicDomain}/`, '');
+      } else {
+        try {
+          const parsed = new URL(fileUrl);
+          key = parsed.pathname.replace(/^\/uploads\//, '').replace(/^\//, '');
+        } catch {
+          key = fileUrl.replace(/^(\/)?uploads\//, '').replace(/^\//, '');
+        }
+      }
+
+      if (key) {
+        await this.deleteFile(key);
+        logger.info(`Deleted storage file for key: ${key}`);
+      }
+    } catch (err) {
+      logger.warn(`Failed to clean up storage file from URL '${fileUrl}':`, err);
+    }
+  }
 }
 
 export const storageService = new StorageService();

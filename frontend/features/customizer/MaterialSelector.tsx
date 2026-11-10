@@ -8,7 +8,7 @@ import { formatCurrency } from '@/utils/formatters';
 export function MaterialSelector() {
   const { currentProduct, selectedMaterial, setMaterial } = useConfiguratorStore();
 
-  if (!currentProduct) return null;
+  if (!currentProduct || !currentProduct.customizable) return null;
 
   return (
     <div className="space-y-3 rounded-lg border p-4 bg-card">

@@ -9,7 +9,17 @@
     "dev": "tsx watch src/server.ts",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test:db": "tsx src/utils/verify-db.ts"
+    "test:db": "tsx src/utils/verify-db.ts",
+    "seed:admin": "tsx src/utils/seed-admin.ts",
+    "test:auth": "tsx src/utils/test-auth.ts",
+    "test:admin": "tsx src/utils/test-admin-products.ts",
+    "test:mongo": "tsx src/utils/test-mongodb-integration.ts",
+    "seed:models": "tsx src/utils/generate-sample-models.ts",
+    "test:3d": "tsx src/utils/test-3d-viewer.ts",
+    "test:android-ar": "tsx src/utils/test-android-ar.ts",
+    "test:ios-ar": "tsx src/utils/test-ios-ar.ts",
+    "test:e2e": "tsx src/utils/test-e2e-integration.ts",
+    "test:qa": "tsx src/utils/verify-all-qa.ts"
   },
   "keywords": [
     "express",

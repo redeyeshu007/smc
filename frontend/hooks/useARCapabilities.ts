@@ -8,6 +8,9 @@ export function useARCapabilities(): ARCapabilities {
     supportsWebXR: false,
     supportsQuickLook: false,
     supportsSceneViewer: false,
+    isAndroid: false,
+    isIOS: false,
+    isDesktop: true,
   });
 
   useEffect(() => {

@@ -8,7 +8,11 @@ const startServer = async (): Promise<void> => {
     logger.info(`Starting AR Door & Window Showroom API in [${env.NODE_ENV}] mode...`);
 
     // Connect to MongoDB
-    await db.connect();
+    const conn = await db.connect();
+    if (conn) {
+      const { seedAdminAccount } = await import('./utils/seed-admin.js');
+      await seedAdminAccount();
+    }
 
     const app = createApp();
 

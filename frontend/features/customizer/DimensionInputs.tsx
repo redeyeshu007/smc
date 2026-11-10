@@ -8,7 +8,7 @@ export function DimensionInputs() {
   const { currentProduct, selectedWidth, selectedHeight, setWidth, setHeight } =
     useConfiguratorStore();
 
-  if (!currentProduct) return null;
+  if (!currentProduct || !currentProduct.customizable) return null;
 
   const { widthRange, heightRange } = currentProduct.customizable;
 

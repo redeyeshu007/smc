@@ -16,29 +16,33 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = Router();
 
-router
-  .route('/')
-  .get(getAssets)
-  .post(
-    authenticate,
-    authorize('admin', 'staff'),
-    uploadMiddleware.single('file'),
-    validateRequest(uploadAssetMetadataSchema),
-    uploadAsset
-  );
+// Public: Fetch 3D assets metadata for rendering
+router.get('/', getAssets);
+router.get('/:id', getAssetById);
+
+// Admin-only: Upload 3D models and delete assets
+router.post(
+  '/',
+  authenticate,
+  authorize('admin'),
+  uploadMiddleware.single('file'),
+  validateRequest(uploadAssetMetadataSchema),
+  uploadAsset
+);
 
 router.post(
   '/presigned-url',
   authenticate,
-  authorize('admin', 'staff'),
+  authorize('admin'),
   validateRequest(getPresignedUrlSchema),
   getPresignedUrl
 );
 
-router
-  .route('/:id')
-  .get(getAssetById)
-  .delete(authenticate, authorize('admin'), deleteAsset);
+router.delete(
+  '/:id',
+  authenticate,
+  authorize('admin'),
+  deleteAsset
+);
 
 export default router;
-

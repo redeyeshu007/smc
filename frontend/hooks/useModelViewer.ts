@@ -18,8 +18,11 @@ export function useModelViewer() {
   }, []);
 
   const triggerAR = () => {
-    if (modelViewerRef.current && 'activateAR' in modelViewerRef.current) {
-      (modelViewerRef.current as any).activateAR();
+    const el = modelViewerRef.current as
+      | (HTMLElement & { activateAR?: () => void })
+      | null;
+    if (el && typeof el.activateAR === 'function') {
+      el.activateAR();
     }
   };
 

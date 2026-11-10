@@ -19,7 +19,7 @@ export const createApp = (): Application => {
     })
   );
 
-  // CORS setup
+  // CORS setup - allows local dev, configured client origin, and Vercel production/preview deployments
   const allowedOrigins = [
     env.CLIENT_ORIGIN,
     'http://localhost:3000',
@@ -29,8 +29,12 @@ export const createApp = (): Application => {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or Postman)
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile native viewers, curl, Postman, Scene Viewer)
+        if (
+          !origin ||
+          allowedOrigins.includes(origin) ||
+          origin.endsWith('.vercel.app')
+        ) {
           callback(null, true);
         } else {
           callback(new Error(`Origin ${origin} not allowed by CORS`));
@@ -52,7 +56,21 @@ export const createApp = (): Application => {
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Static directory for uploaded files (models, images, textures) in dev/local mode
-  app.use('/uploads', express.static(LOCAL_UPLOADS_DIR));
+  // Configured with exact MIME types required for Apple Quick Look (USDZ) and Android/Web (GLB)
+  app.use(
+    '/uploads',
+    express.static(LOCAL_UPLOADS_DIR, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.usdz')) {
+          res.setHeader('Content-Type', 'model/vnd.usdz+zip');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+        } else if (filePath.endsWith('.glb')) {
+          res.setHeader('Content-Type', 'model/gltf-binary');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+        }
+      },
+    })
+  );
 
   // Root welcome
   app.get('/', (_req: Request, res: Response) => {
@@ -63,8 +81,11 @@ export const createApp = (): Application => {
     });
   });
 
-  // API router
-  app.use(env.API_PREFIX, apiRouter);
+  // API router (mounts on both /api and /api/v1 for unified compatibility)
+  app.use('/api', apiRouter);
+  if (env.API_PREFIX !== '/api') {
+    app.use(env.API_PREFIX, apiRouter);
+  }
 
   // 404 handler
   app.use((req: Request, _res: Response, next) => {

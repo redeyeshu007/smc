@@ -8,3 +8,4 @@ export interface ARSessionConfig {
   placement: ARPlacementMode;
   scale?: number;
 }
+

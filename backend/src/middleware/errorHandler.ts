@@ -20,7 +20,7 @@ export const errorHandler: ErrorRequestHandler = (
   } else if ('code' in err && (err as { code: number }).code === 11000) {
     // Mongo duplicate key error
     statusCode = 409;
-    message = 'Duplicate field value entered';
+    message = 'Duplicate field value entered in database';
   } else if (err.name === 'ValidationError') {
     // Mongoose validation error
     statusCode = 400;
@@ -28,7 +28,14 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === 'CastError') {
     // Mongoose cast error (e.g. invalid ObjectId)
     statusCode = 400;
-    message = 'Resource not found with specified ID';
+    message = 'Invalid resource ID format';
+  } else if (
+    err.name === 'MongooseServerSelectionError' ||
+    err.name === 'MongoNetworkError' ||
+    err.name === 'MongoServerSelectionError'
+  ) {
+    statusCode = 503;
+    message = 'Database service temporarily unavailable. Please verify MongoDB connection.';
   } else if (err.name === 'JsonWebTokenError') {
     statusCode = 401;
     message = 'Invalid authentication token';
@@ -37,8 +44,10 @@ export const errorHandler: ErrorRequestHandler = (
     message = 'Authentication token expired';
   }
 
-  // Log server errors (500)
-  if (statusCode >= 500) {
+  // Log server errors
+  if (statusCode === 503) {
+    logger.warn(`[503 SERVICE UNAVAILABLE] ${req.method} ${req.originalUrl}: ${message}`);
+  } else if (statusCode >= 500) {
     logger.error(`[500 ERROR] ${req.method} ${req.originalUrl}:`, err);
   } else {
     logger.warn(`[${statusCode} CLIENT ERROR] ${req.method} ${req.originalUrl}: ${message}`);

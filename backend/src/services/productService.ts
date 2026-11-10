@@ -1,151 +1,191 @@
-import { Product, IProduct } from '../models/Product.js';
+import { FilterQuery, Types } from 'mongoose';
+import { Product, IProduct, ProductStatus } from '../models/Product.js';
+import { storageService } from './storageService.js';
 import { ApiError } from '../utils/apiError.js';
-import { FilterQuery } from 'mongoose';
+import { logger } from '../utils/logger.js';
+
+export interface CreateProductInput {
+  name: string;
+  glbUrl: string;
+  usdzUrl?: string;
+  status?: ProductStatus;
+  createdBy: string | Types.ObjectId;
+}
+
+export interface UpdateProductInput {
+  name?: string;
+  glbUrl?: string;
+  usdzUrl?: string;
+  status?: ProductStatus;
+}
 
 export class ProductService {
   /**
-   * Create a new product
+   * Create a new product (Draft or Published)
    */
-  async createProduct(data: Partial<IProduct>): Promise<IProduct> {
-    const slug =
-      data.slug ||
-      data.title
-        ?.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-    const existing = await Product.findOne({
-      $or: [{ slug }, { sku: data.sku }],
+  async createProduct(data: CreateProductInput): Promise<IProduct> {
+    const product = await Product.create({
+      name: data.name.trim(),
+      glbUrl: data.glbUrl.trim(),
+      usdzUrl: data.usdzUrl?.trim() || undefined,
+      status: data.status || 'draft',
+      createdBy: new Types.ObjectId(data.createdBy.toString()),
     });
 
-    if (existing) {
-      throw ApiError.conflict('Product with this slug or SKU already exists');
-    }
-
-    const product = await Product.create({ ...data, slug });
+    logger.info(`Product created: ${product.name} [${product.status}] (ID: ${product._id})`);
     return product;
   }
 
   /**
-   * Find product by ID with populated 3D assets
+   * Get all products for Admin (both Draft and Published)
    */
-  async getProductById(id: string): Promise<IProduct> {
-    const product = await Product.findById(id)
-      .populate('category')
-      .populate('assets.primaryGlb')
-      .populate('assets.iosUsdz');
-
-    if (!product) {
-      throw ApiError.notFound(`Product with ID '${id}' not found`);
-    }
-
-    return product;
-  }
-
-  /**
-   * Find product by Slug with populated 3D assets
-   */
-  async getProductBySlug(slug: string): Promise<IProduct> {
-    const product = await Product.findOne({ slug })
-      .populate('category')
-      .populate('assets.primaryGlb')
-      .populate('assets.iosUsdz');
-
-    if (!product) {
-      throw ApiError.notFound(`Product with slug '${slug}' not found`);
-    }
-
-    return product;
-  }
-
-  /**
-   * Query products with pagination & filtering
-   */
-  async queryProducts(params: {
-    page: number;
-    limit: number;
-    productType?: 'door' | 'window';
-    subType?: string;
-    status?: string;
-    category?: string;
+  async getAdminProducts(params?: {
     search?: string;
-    sort?: string;
-  }): Promise<{ products: IProduct[]; total: number; pages: number }> {
-    const {
-      page = 1,
-      limit = 20,
-      productType,
-      subType,
-      status,
-      category,
-      search,
-      sort = '-createdAt',
-    } = params;
-
+    status?: 'draft' | 'published';
+  }): Promise<IProduct[]> {
     const filter: FilterQuery<IProduct> = {};
 
-    if (productType) filter.productType = productType;
-    if (subType) filter.subType = subType;
-    if (status) filter.status = status;
-    if (category) filter.category = category;
-
-    if (search) {
-      filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { sku: { $regex: search, $options: 'i' } },
-      ];
+    if (params?.status) {
+      filter.status = params.status;
     }
 
-    const skip = (page - 1) * limit;
+    if (params?.search) {
+      filter.name = { $regex: params.search, $options: 'i' };
+    }
 
-    const [products, total] = await Promise.all([
-      Product.find(filter)
-        .populate('category', 'name slug type')
-        .populate('assets.primaryGlb', 'url format fileSize lodLevel isArReady')
-        .populate('assets.iosUsdz', 'url format fileSize')
-        .sort(sort)
-        .skip(skip)
-        .limit(limit),
-      Product.countDocuments(filter),
-    ]);
+    const products = await Product.find(filter)
+      .populate('createdBy', 'name email role')
+      .sort({ createdAt: -1 });
 
-    return {
-      products,
-      total,
-      pages: Math.ceil(total / limit),
-    };
+    return products;
   }
 
   /**
-   * Update product by ID
+   * Get only published products for Users / Public Website
    */
-  async updateProduct(id: string, updateData: Partial<IProduct>): Promise<IProduct> {
-    const product = await Product.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    })
-      .populate('category')
-      .populate('assets.primaryGlb')
-      .populate('assets.iosUsdz');
+  async getPublishedProducts(params?: { search?: string }): Promise<IProduct[]> {
+    const filter: FilterQuery<IProduct> = { status: 'published' };
+
+    if (params?.search) {
+      filter.name = { $regex: params.search, $options: 'i' };
+    }
+
+    const products = await Product.find(filter)
+      .select('name glbUrl usdzUrl status createdAt updatedAt')
+      .sort({ createdAt: -1 });
+
+    return products;
+  }
+
+  /**
+   * Get product by ID (Enforces published status unless allowDraft is true)
+   */
+  async getProductById(id: string, allowDraft = false): Promise<IProduct> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw ApiError.badRequest(`Invalid product ID format: '${id}'`);
+    }
+
+    const product = await Product.findById(id).populate('createdBy', 'name email');
 
     if (!product) {
       throw ApiError.notFound(`Product with ID '${id}' not found`);
+    }
+
+    if (!allowDraft && product.status !== 'published') {
+      throw ApiError.notFound('Product is currently in draft and not visible to users');
     }
 
     return product;
   }
 
   /**
-   * Delete product by ID
+   * Update product metadata or file URLs
    */
-  async deleteProduct(id: string): Promise<void> {
-    const product = await Product.findByIdAndDelete(id);
+  async updateProduct(id: string, updateData: UpdateProductInput): Promise<IProduct> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw ApiError.badRequest(`Invalid product ID format: '${id}'`);
+    }
+
+    const existing = await Product.findById(id);
+    if (!existing) {
+      throw ApiError.notFound(`Product with ID '${id}' not found`);
+    }
+
+    // If new GLB is uploaded, clean up old GLB from storage
+    if (updateData.glbUrl && updateData.glbUrl !== existing.glbUrl) {
+      await storageService.deleteFileFromUrl(existing.glbUrl);
+    }
+
+    // If new USDZ is uploaded or changed, clean up old USDZ from storage
+    if (updateData.usdzUrl && updateData.usdzUrl !== existing.usdzUrl) {
+      await storageService.deleteFileFromUrl(existing.usdzUrl);
+    }
+
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      {
+        ...(updateData.name ? { name: updateData.name.trim() } : {}),
+        ...(updateData.glbUrl ? { glbUrl: updateData.glbUrl.trim() } : {}),
+        ...(updateData.usdzUrl !== undefined ? { usdzUrl: updateData.usdzUrl?.trim() || undefined } : {}),
+        ...(updateData.status ? { status: updateData.status } : {}),
+      },
+      { new: true, runValidators: true }
+    ).populate('createdBy', 'name email');
+
+    if (!updated) {
+      throw ApiError.notFound(`Product with ID '${id}' not found`);
+    }
+
+    logger.info(`Product updated: ${updated.name} (ID: ${updated._id})`);
+    return updated;
+  }
+
+  /**
+   * Explicitly publish a draft product
+   */
+  async publishProduct(id: string): Promise<IProduct> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw ApiError.badRequest(`Invalid product ID format: '${id}'`);
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      id,
+      { status: 'published' },
+      { new: true, runValidators: true }
+    ).populate('createdBy', 'name email');
+
     if (!product) {
       throw ApiError.notFound(`Product with ID '${id}' not found`);
     }
+
+    logger.info(`Product published: ${product.name} (ID: ${product._id})`);
+    return product;
+  }
+
+  /**
+   * Delete product and clean up its 3D files from storage
+   */
+  async deleteProduct(id: string): Promise<void> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw ApiError.badRequest(`Invalid product ID format: '${id}'`);
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      throw ApiError.notFound(`Product with ID '${id}' not found`);
+    }
+
+    // Clean up files in object storage / disk to maintain storage consistency
+    if (product.glbUrl) {
+      await storageService.deleteFileFromUrl(product.glbUrl);
+    }
+    if (product.usdzUrl) {
+      await storageService.deleteFileFromUrl(product.usdzUrl);
+    }
+
+    await Product.findByIdAndDelete(id);
+    logger.info(`Product and associated 3D models deleted: ${product.name} (ID: ${id})`);
   }
 }
 
 export const productService = new ProductService();
-

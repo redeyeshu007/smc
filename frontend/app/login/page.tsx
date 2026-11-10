@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { authService } from '@/services/auth-service';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,39 +15,74 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    // Check if already authenticated and redirect accordingly
+    const storedUser = authService.getStoredUser();
+    const storedToken = authService.getStoredToken();
+    if (storedUser && storedToken) {
+      if (storedUser.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
+    }
+  }, [router]);
+
+  const validate = (): boolean => {
+    const errors: { [key: string]: string } = {};
+    if (!email.trim()) {
+      errors.email = 'Email address is required.';
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      errors.email = 'Please provide a valid email address.';
+    }
+
+    if (!password) {
+      errors.password = 'Password is required.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!email || !password) {
-      setErrorMessage('Please fill in both email and password.');
+    if (!validate()) {
       return;
     }
 
     setIsLoading(true);
     try {
-      // Prepared for API authentication
-      const res = await fetch('http://localhost:5000/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const response = await authService.login({
+        email: email.trim(),
+        password,
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Authentication failed');
-      }
+      if (response.success && response.data) {
+        authService.saveSession(response.data);
 
-      if (data.data?.token) {
-        localStorage.setItem('smc_auth_token', data.data.token);
-        localStorage.setItem('smc_user', JSON.stringify(data.data.user));
+        // Role-based redirection
+        if (response.data.user.role === 'admin') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      } else {
+        throw new Error(response.message || 'Login failed');
       }
-
-      router.push('/dashboard');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Login failed. Please check your credentials.';
-      setErrorMessage(message);
+      const customErr = err as { message?: string; errors?: Array<{ path?: string; message: string }> };
+      if (customErr.errors && customErr.errors.length > 0) {
+        const fieldErrors: { [key: string]: string } = {};
+        customErr.errors.forEach((e) => {
+          if (e.path) fieldErrors[e.path] = e.message;
+        });
+        setValidationErrors(fieldErrors);
+      }
+      setErrorMessage(customErr.message || 'Invalid email or password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +101,7 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             {errorMessage && (
               <div className="border border-red-200 bg-red-50/50 p-3 text-xs text-red-600">
                 {errorMessage}
@@ -79,10 +115,18 @@ export default function LoginPage() {
                 type="email"
                 placeholder="architect@studio.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => ({ ...prev, email: '' }));
+                  }
+                }}
                 autoComplete="email"
                 required
               />
+              {validationErrors.email && (
+                <p className="text-[11px] text-red-500 mt-1">{validationErrors.email}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -94,10 +138,18 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (validationErrors.password) {
+                    setValidationErrors((prev) => ({ ...prev, password: '' }));
+                  }
+                }}
                 autoComplete="current-password"
                 required
               />
+              {validationErrors.password && (
+                <p className="text-[11px] text-red-500 mt-1">{validationErrors.password}</p>
+              )}
             </div>
 
             <Button
@@ -107,7 +159,7 @@ export default function LoginPage() {
               className="w-full tracking-wider uppercase text-xs font-semibold mt-2"
               disabled={isLoading}
             >
-              {isLoading ? 'Signing In...' : 'Login'}
+              {isLoading ? 'Verifying Credentials...' : 'Login'}
             </Button>
 
             <div className="text-center pt-4 border-t border-border">

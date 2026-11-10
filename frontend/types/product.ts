@@ -1,7 +1,4 @@
-import { Asset3D } from './asset3d';
-
-export type ProductType = 'door' | 'window';
-export type ProductStatus = 'draft' | 'published' | 'archived';
+export type ProductStatus = 'draft' | 'published';
 
 export interface MaterialOption {
   name: string;
@@ -20,55 +17,57 @@ export interface HardwareOption {
   price: number;
 }
 
-export interface ProductDimensions {
-  defaultWidth: number;
-  defaultHeight: number;
-  defaultDepth: number;
-  unit: 'mm' | 'inches';
-}
-
-export interface ProductCustomizable {
-  widthRange: { min: number; max: number };
-  heightRange: { min: number; max: number };
-  materials: MaterialOption[];
-  hardware: HardwareOption[];
-}
-
-export interface ProductAssets {
-  primaryGlb?: Asset3D | string;
-  iosUsdz?: Asset3D | string;
-  thumbnailUrl: string;
-  galleryImages: string[];
-}
-
-export interface ProductARConfig {
-  enabled: boolean;
-  placement: 'floor' | 'wall' | 'window';
-  scale: number;
-  autoRotate: boolean;
-}
-
 export interface Product {
   _id: string;
-  title: string;
-  slug: string;
-  sku: string;
-  description: string;
-  productType: ProductType;
-  subType: string;
-  category: {
+  name: string;
+  glbUrl: string;
+  usdzUrl?: string;
+  status: ProductStatus;
+  createdBy?: {
     _id: string;
     name: string;
-    slug: string;
-    type: string;
+    email: string;
   };
-  basePrice: number;
-  currency: string;
-  dimensions: ProductDimensions;
-  customizable: ProductCustomizable;
-  assets: ProductAssets;
-  arConfig: ProductARConfig;
-  status: ProductStatus;
   createdAt: string;
   updatedAt: string;
+  title?: string;
+
+  // Optional fields for component compatibility
+  dimensions?: {
+    defaultWidth: number;
+    defaultHeight: number;
+    defaultDepth: number;
+    unit: string;
+  };
+  customizable?: {
+    widthRange: { min: number; max: number };
+    heightRange: { min: number; max: number };
+    materials: Array<{
+      name: string;
+      code: string;
+      hexColor: string;
+      roughness: number;
+      metalness: number;
+      textureUrl?: string;
+      priceModifier: number;
+    }>;
+    hardware: Array<{
+      name: string;
+      code: string;
+      finish: string;
+      price: number;
+    }>;
+  };
+  assets?: {
+    primaryGlb?: { url?: string };
+    iosUsdz?: { url?: string };
+    thumbnailUrl?: string;
+    galleryImages?: string[];
+  };
+  productType?: 'door' | 'window';
+  basePrice?: number;
+  currency?: string;
+  description?: string;
+  slug?: string;
+  subType?: string;
 }

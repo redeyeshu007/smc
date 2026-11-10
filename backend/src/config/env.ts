@@ -17,11 +17,16 @@ const envSchema = z.object({
   MONGODB_URI: z
     .string()
     .default('mongodb://localhost:27017/smc_showroom'),
-  MONGODB_DB_NAME: z.string().default('smc_showroom'),
+  MONGODB_DB_NAME: z.string().default('smc'),
 
   // JWT
   JWT_SECRET: z.string().min(16).default('smc_development_jwt_secret_key_32chars'),
   JWT_EXPIRES_IN: z.string().default('7d'),
+
+  // Initial Admin Account
+  ADMIN_NAME: z.string().default('SMC Admin'),
+  ADMIN_EMAIL: z.string().email().default('javix@gmail.com'),
+  ADMIN_PASSWORD: z.string().min(6).default('javix2026'),
 
   // Storage (Cloudflare R2 / AWS S3 / Local fallback)
   STORAGE_PROVIDER: z.enum(['s3', 'r2', 'local']).default('local'),
@@ -48,4 +53,3 @@ const parseEnv = () => {
 
 export const env = parseEnv();
 export type Environment = z.infer<typeof envSchema>;
-

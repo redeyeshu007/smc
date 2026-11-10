@@ -27,16 +27,16 @@ export const useConfiguratorStore = create<ConfiguratorState>((set, get) => ({
   calculatedPrice: 0,
 
   setProduct: (product) => {
-    const defaultMat = product.customizable.materials[0] || null;
-    const defaultHard = product.customizable.hardware[0] || null;
-    const base = product.basePrice;
+    const defaultMat = product.customizable?.materials?.[0] || null;
+    const defaultHard = product.customizable?.hardware?.[0] || null;
+    const base = product.basePrice || 0;
     const matPrice = defaultMat?.priceModifier || 0;
     const hardPrice = defaultHard?.price || 0;
 
     set({
       currentProduct: product,
-      selectedWidth: product.dimensions.defaultWidth,
-      selectedHeight: product.dimensions.defaultHeight,
+      selectedWidth: product.dimensions?.defaultWidth || 1000,
+      selectedHeight: product.dimensions?.defaultHeight || 2000,
       selectedMaterial: defaultMat,
       selectedHardware: defaultHard,
       calculatedPrice: base + matPrice + hardPrice,
@@ -49,7 +49,7 @@ export const useConfiguratorStore = create<ConfiguratorState>((set, get) => ({
   setMaterial: (material) => {
     const { currentProduct, selectedHardware } = get();
     if (!currentProduct) return;
-    const base = currentProduct.basePrice;
+    const base = currentProduct.basePrice || 0;
     const hardPrice = selectedHardware?.price || 0;
     set({
       selectedMaterial: material,
@@ -60,7 +60,7 @@ export const useConfiguratorStore = create<ConfiguratorState>((set, get) => ({
   setHardware: (hardware) => {
     const { currentProduct, selectedMaterial } = get();
     if (!currentProduct) return;
-    const base = currentProduct.basePrice;
+    const base = currentProduct.basePrice || 0;
     const matPrice = selectedMaterial?.priceModifier || 0;
     set({
       selectedHardware: hardware,
@@ -75,4 +75,3 @@ export const useConfiguratorStore = create<ConfiguratorState>((set, get) => ({
     }
   },
 }));
-
