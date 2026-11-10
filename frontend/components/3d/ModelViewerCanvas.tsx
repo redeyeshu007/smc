@@ -2,9 +2,6 @@
 
 import React, { useRef } from 'react';
 import { useModelViewer } from '@/hooks/useModelViewer';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Maximize2, View } from 'lucide-react';
 
 interface ModelViewerCanvasProps {
   src?: string;
@@ -22,43 +19,36 @@ interface ModelViewerCanvasProps {
 export function ModelViewerCanvas({
   src,
   iosSrc,
-  alt = '3D Door/Window Model',
+  alt = 'Architectural 3D Model',
   poster,
   autoRotate = false,
   cameraControls = true,
   ar = true,
   arModes = 'webxr scene-viewer quick-look',
   arPlacement = 'wall',
-  className = 'w-full h-full min-h-[400px]',
+  className = 'w-full h-[520px]',
 }: ModelViewerCanvasProps) {
-  const { isReady, modelViewerRef, triggerAR } = useModelViewer();
+  const { isReady, modelViewerRef } = useModelViewer();
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
       ref={containerRef}
-      className={`relative rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex items-center justify-center ${className}`}
+      className={`relative border border-border bg-white flex items-center justify-center overflow-hidden ${className}`}
     >
       {!isReady ? (
-        <div className="flex flex-col items-center justify-center p-8 text-neutral-400 space-y-3">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-medium">Initializing 3D Model Viewer engine...</span>
+        <div className="flex flex-col items-center justify-center p-8 text-secondary space-y-2">
+          <span className="text-xs tracking-wider uppercase">Loading 3D Engine...</span>
         </div>
       ) : !src ? (
-        <div className="flex flex-col items-center justify-center p-8 text-neutral-400 text-center space-y-3">
-          <View className="w-12 h-12 text-neutral-600" />
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-neutral-300">Ready for GLB / USDZ 3D Asset</p>
-            <p className="text-xs text-neutral-500">
-              Upload a door/window 3D model in Admin or select from catalog
-            </p>
-          </div>
-          <Badge variant="outline" className="border-neutral-700 text-neutral-400 text-xs">
-            WebXR • Quick Look • Scene Viewer
-          </Badge>
+        <div className="flex flex-col items-center justify-center p-12 text-center space-y-3">
+          <span className="text-xs uppercase tracking-widest text-primary font-medium">3D Viewport</span>
+          <p className="text-sm font-medium text-foreground">Interactive 3D Model Ingestion Ready</p>
+          <p className="text-xs text-secondary max-w-sm">
+            Select a published door or window to inspect the 3D model and launch Augmented Reality.
+          </p>
         </div>
       ) : (
-        // Standard Web Component representation
         <div className="w-full h-full relative">
           {React.createElement('model-viewer', {
             ref: modelViewerRef,
@@ -71,25 +61,10 @@ export function ModelViewerCanvas({
             ar: ar ? '' : undefined,
             'ar-modes': arModes,
             'ar-placement': arPlacement,
-            'shadow-intensity': '1',
-            'exposure': '1',
-            style: { width: '100%', height: '100%' },
+            'shadow-intensity': '0.8',
+            'exposure': '1.0',
+            style: { width: '100%', height: '100%', backgroundColor: '#FFFFFF' },
           })}
-
-          {/* Viewer Overlay Controls */}
-          <div className="absolute bottom-4 right-4 flex items-center space-x-2">
-            {ar && (
-              <Button
-                size="sm"
-                variant="default"
-                onClick={triggerAR}
-                className="shadow-lg backdrop-blur"
-              >
-                <Maximize2 className="w-3.5 h-3.5 mr-1.5" />
-                View in My Room (AR)
-              </Button>
-            )}
-          </div>
         </div>
       )}
     </div>

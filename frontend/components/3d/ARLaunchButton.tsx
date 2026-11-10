@@ -4,10 +4,9 @@ import React from 'react';
 import { useARCapabilities } from '@/hooks/useARCapabilities';
 import { buildSceneViewerUrl } from '@/utils/3d-helpers';
 import { Button, ButtonProps } from '@/components/ui/button';
-import { Box, Sparkles } from 'lucide-react';
 
 interface ARLaunchButtonProps extends ButtonProps {
-  glbUrl: string;
+  glbUrl?: string;
   usdzUrl?: string;
   title: string;
 }
@@ -41,20 +40,21 @@ export function ARLaunchButton({
       return;
     }
 
-    // 3. Desktop / WebXR fallback
-    alert('AR View requires a mobile device with ARCore (Android) or ARKit (iOS). Open this page on your phone!');
+    // 3. Desktop / Browser notification
+    alert(
+      'To experience Augmented Reality on your wall, open this page on an ARCore (Android) or ARKit (iPhone/iPad) mobile device.'
+    );
   };
 
   return (
     <Button
+      variant="gold"
+      size="lg"
       onClick={handleLaunch}
-      className={className}
+      className={`tracking-wider uppercase text-xs font-semibold ${className}`}
       {...props}
     >
-      <Box className="w-4 h-4 mr-2" />
-      <span>View in AR</span>
-      <Sparkles className="w-3.5 h-3.5 ml-1.5 opacity-70" />
+      View in AR
     </Button>
   );
 }
-

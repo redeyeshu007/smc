@@ -4,26 +4,30 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-dark text-dark-foreground hover:bg-dark-hover active:bg-dark",
+        gold:
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-[#A48350]",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-border bg-white text-foreground hover:bg-muted active:bg-[#F0F0F0]",
+        outlineDark:
+          "border border-foreground bg-white text-foreground hover:bg-dark hover:text-white",
+        ghost:
+          "text-foreground hover:bg-muted active:bg-[#EEEEEE]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-muted text-secondary hover:text-foreground",
+        danger:
+          "border border-red-200 text-red-600 hover:bg-red-50",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-11 px-6 text-sm",
+        sm: "h-9 px-4 text-xs",
+        lg: "h-12 px-8 text-sm tracking-wide",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
@@ -54,4 +58,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
-
