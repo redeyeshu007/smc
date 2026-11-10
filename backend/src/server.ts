@@ -5,7 +5,7 @@ import { logger } from './utils/logger.js';
 
 const startServer = async (): Promise<void> => {
   try {
-    logger.info(`Starting AR/VR Showroom API in [${env.NODE_ENV}] mode...`);
+    logger.info(`Starting AR Door & Window Showroom API in [${env.NODE_ENV}] mode...`);
 
     // Connect to MongoDB
     await db.connect();

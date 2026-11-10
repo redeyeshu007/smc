@@ -57,7 +57,7 @@ export const createApp = (): Application => {
   // Root welcome
   app.get('/', (_req: Request, res: Response) => {
     res.json({
-      name: 'AR/VR Door & Window Showroom API',
+      name: 'AR Door & Window Showroom API',
       status: 'online',
       documentation: `${env.API_PREFIX}/health`,
     });

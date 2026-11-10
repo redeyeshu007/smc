@@ -28,7 +28,6 @@ export class AssetService {
       lodLevel?: 'lod0' | 'lod1' | 'lod2';
       polycount?: number;
       isArReady?: boolean;
-      isVrReady?: boolean;
       dimensions?: { width: number; height: number; depth: number };
     }
   ): Promise<IAsset3D> {
@@ -54,7 +53,6 @@ export class AssetService {
       lodLevel: metadata.lodLevel || 'lod0',
       polycount: metadata.polycount,
       isArReady: metadata.isArReady ?? (format === 'glb' || format === 'usdz'),
-      isVrReady: metadata.isVrReady ?? (format === 'glb'),
       dimensions: metadata.dimensions,
     });
 
@@ -78,7 +76,6 @@ export class AssetService {
   async listAssets(filter: {
     format?: AssetFormat;
     isArReady?: boolean;
-    isVrReady?: boolean;
     lodLevel?: string;
   }): Promise<IAsset3D[]> {
     return Asset3D.find(filter).sort({ createdAt: -1 });
@@ -95,4 +92,3 @@ export class AssetService {
 }
 
 export const assetService = new AssetService();
-

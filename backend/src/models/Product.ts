@@ -56,12 +56,6 @@ export interface IProduct extends Document {
     scale: number;
     autoRotate: boolean;
   };
-  vrShowroom: {
-    enabled: boolean;
-    position: { x: number; y: number; z: number };
-    rotation: { x: number; y: number; z: number };
-    featured: boolean;
-  };
   status: ProductStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -153,20 +147,6 @@ const ProductSchema = new Schema<IProduct>(
       scale: { type: Number, default: 1.0 },
       autoRotate: { type: Boolean, default: false },
     },
-    vrShowroom: {
-      enabled: { type: Boolean, default: true },
-      position: {
-        x: { type: Number, default: 0 },
-        y: { type: Number, default: 0 },
-        z: { type: Number, default: 0 },
-      },
-      rotation: {
-        x: { type: Number, default: 0 },
-        y: { type: Number, default: 0 },
-        z: { type: Number, default: 0 },
-      },
-      featured: { type: Boolean, default: false },
-    },
     status: {
       type: String,
       enum: ['draft', 'published', 'archived'],
@@ -180,4 +160,3 @@ const ProductSchema = new Schema<IProduct>(
 );
 
 export const Product = mongoose.model<IProduct>('Product', ProductSchema);
-

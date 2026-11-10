@@ -21,9 +21,7 @@ export interface Asset3D {
   polycount?: number;
   hasAnimations: boolean;
   isArReady: boolean;
-  isVrReady: boolean;
   metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
-

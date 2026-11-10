@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Box,
-  Glasses,
   Server,
   Database,
   Cloud,
@@ -19,13 +18,15 @@ import {
   ShoppingBag,
   ExternalLink,
   Sparkles,
+  Smartphone,
 } from 'lucide-react';
 
 const ARCHITECTURE_MODULES = [
   {
-    title: '1. Customer Website',
+    title: '1. Customer Storefront',
     badge: 'Next.js 15 App Router',
-    description: 'High-performance storefront with dynamic product discovery, interactive 3D configurator, and real-time pricing.',
+    description:
+      'High-performance product discovery catalog with real-time dimension and material customization.',
     icon: ShoppingBag,
     href: '/catalog',
     status: 'Ready',
@@ -33,15 +34,17 @@ const ARCHITECTURE_MODULES = [
   {
     title: '2. Admin Dashboard',
     badge: 'Operations & Assets',
-    description: 'Backoffice management for catalog CRUD, product pricing tiers, inventory status, and 3D asset uploads.',
+    description:
+      'Administrative portal for publishing Door & Window products and managing 3D GLB/USDZ model assets.',
     icon: LayoutDashboard,
     href: '/admin',
     status: 'Ready',
   },
   {
-    title: '3. Backend API',
+    title: '3. Backend REST API',
     badge: 'Express.js & TypeScript',
-    description: 'Modular REST API with Zod validation, JWT authentication, unified error handling, and S3/R2 storage services.',
+    description:
+      'Modular REST API with Zod validation, JWT authentication, unified error handling, and S3/R2 storage integration.',
     icon: Server,
     href: 'http://localhost:5000/api/v1/health',
     external: true,
@@ -50,33 +53,28 @@ const ARCHITECTURE_MODULES = [
   {
     title: '4. MongoDB Database',
     badge: 'Mongoose ODM',
-    description: 'Schema-compiled collections for Products, 3D Assets (GLB/USDZ), Categories, and Users with indexing.',
+    description:
+      'Production collections for Products, 3D Assets (GLB/USDZ), Categories, and Users with full indexing.',
     icon: Database,
     href: '/admin',
     status: 'Ready',
   },
   {
-    title: '5. 3D Asset Management',
+    title: '5. 3D Asset Pipeline',
     badge: 'GLB / USDZ / Sharp',
-    description: 'LOD level indexing, polycount analytics, image WebP compression, and presigned cloud uploads for Blender exports.',
+    description:
+      'Blender model ingestion, LOD tagging, polycount metadata, and presigned uploads to S3/Cloudflare R2.',
     icon: Cloud,
     href: '/admin',
     status: 'Ready',
   },
   {
-    title: '6. AR Integration',
-    badge: 'Google Model Viewer',
-    description: 'WebXR + Android Scene Viewer (ARCore) + iOS Quick Look (ARKit USDZ) for true-to-scale in-room wall placement.',
-    icon: Box,
+    title: '6. AR Integration Engine',
+    badge: 'Google model-viewer',
+    description:
+      'Google model-viewer runtime with Android Scene Viewer (ARCore) and Apple Quick Look (USDZ) wall-placement AR.',
+    icon: Smartphone,
     href: '/ar-viewer',
-    status: 'Ready',
-  },
-  {
-    title: '7. VR Virtual Showroom',
-    badge: 'Three.js / React Three Fiber',
-    description: 'Immersive 3D architectural showroom powered by @react-three/fiber, @react-three/drei, and WebXR scene graph.',
-    icon: Glasses,
-    href: '/vr-showroom',
     status: 'Ready',
   },
 ];
@@ -97,37 +95,37 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="border-primary/30 text-primary">
               <Sparkles className="w-3 h-3 mr-1" />
-              Full-Stack Architecture Setup
+              AR Door & Window Platform
             </Badge>
             <Badge variant="secondary">Next.js 15 • React 19 • Express • MongoDB</Badge>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            AR/VR Door & Window Showroom Platform
+            AR Door & Window Showroom
           </h1>
 
           <p className="text-base sm:text-lg text-muted-foreground">
-            A production-grade, modular foundation built for photorealistic 3D visualization,
-            mobile Augmented Reality (ARCore & ARKit), and immersive Virtual Reality (WebXR & Three.js).
+            A production-ready full-stack architecture for viewing 3D architectural doors and windows
+            and placing them into real spaces using Augmented Reality (Android Scene Viewer & Apple AR Quick Look).
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
             <Button asChild size="default">
               <Link href="/catalog">
                 <ShoppingBag className="w-4 h-4 mr-2" />
-                Explore Catalog
+                Browse Catalog
               </Link>
             </Button>
             <Button asChild variant="outline" size="default">
               <Link href="/ar-viewer">
                 <Box className="w-4 h-4 mr-2" />
-                AR Viewer Engine
+                AR Experience Engine
               </Link>
             </Button>
             <Button asChild variant="secondary" size="default">
-              <Link href="/vr-showroom">
-                <Glasses className="w-4 h-4 mr-2" />
-                VR Showroom
+              <Link href="/admin">
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Admin Dashboard
               </Link>
             </Button>
           </div>
@@ -144,7 +142,7 @@ export default function HomePage() {
                 Backend & MongoDB Integration Status
               </CardTitle>
               <CardDescription className="text-xs">
-                Real-time health telemetry queried from Express REST API
+                Live health telemetry queried from Express REST API
               </CardDescription>
             </div>
 
@@ -195,10 +193,10 @@ export default function HomePage() {
         </CardContent>
       </Card>
 
-      {/* 7 Architectural Modules Grid */}
+      {/* Architectural Modules Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold tracking-tight">System Architecture Tiers</h2>
+          <h2 className="text-xl font-bold tracking-tight">System Architecture Modules</h2>
           <span className="text-xs text-muted-foreground">Modular & Clean Architecture</span>
         </div>
 
@@ -232,7 +230,7 @@ export default function HomePage() {
                   ) : (
                     <Button asChild variant="secondary" size="sm" className="w-full text-xs">
                       <Link href={module.href}>
-                        <span>Access Tier</span>
+                        <span>Explore Module</span>
                       </Link>
                     </Button>
                   )}

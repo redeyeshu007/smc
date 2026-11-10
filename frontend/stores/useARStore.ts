@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ARPlacementMode, ARSessionStatus } from '@/types/ar-vr';
+import { ARPlacementMode, ARSessionStatus } from '@/types/ar';
 
 interface ARStoreState {
   status: ARSessionStatus;
@@ -49,4 +49,3 @@ export const useARStore = create<ARStoreState>((set) => ({
       productTitle: '',
     }),
 }));
-

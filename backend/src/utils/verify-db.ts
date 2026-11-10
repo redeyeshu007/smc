@@ -63,7 +63,6 @@ async function verifyDatabase() {
       lodLevel: 'lod0',
       polycount: 14200,
       isArReady: true,
-      isVrReady: true,
     });
     logger.info(` Asset3D model verified. Created ID: ${testAsset._id}`);
 
@@ -124,12 +123,6 @@ async function verifyDatabase() {
         scale: 1.0,
         autoRotate: false,
       },
-      vrShowroom: {
-        enabled: true,
-        position: { x: 0, y: 0, z: -3 },
-        rotation: { x: 0, y: 0, z: 0 },
-        featured: true,
-      },
       status: 'published',
     });
     logger.info(` Product model verified. Created ID: ${testProduct._id}`);
@@ -159,4 +152,3 @@ verifyDatabase().catch((err) => {
   logger.error('Verification failed:', err);
   process.exit(1);
 });
-

@@ -102,7 +102,7 @@ export class ProductService {
     const [products, total] = await Promise.all([
       Product.find(filter)
         .populate('category', 'name slug type')
-        .populate('assets.primaryGlb', 'url format fileSize lodLevel isArReady isVrReady')
+        .populate('assets.primaryGlb', 'url format fileSize lodLevel isArReady')
         .populate('assets.iosUsdz', 'url format fileSize')
         .sort(sort)
         .skip(skip)

@@ -4,13 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
-import { Box, Glasses, Layers, LayoutDashboard, ShoppingBag } from 'lucide-react';
+import { Box, Layers, LayoutDashboard, ShoppingBag } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Overview', icon: Layers },
   { href: '/catalog', label: 'Showroom Catalog', icon: ShoppingBag },
-  { href: '/ar-viewer', label: 'AR Viewer', icon: Box },
-  { href: '/vr-showroom', label: 'VR Showroom', icon: Glasses },
+  { href: '/ar-viewer', label: 'AR Experience', icon: Box },
   { href: '/admin', label: 'Admin Hub', icon: LayoutDashboard },
 ];
 
@@ -26,7 +25,7 @@ export function Navbar() {
           </div>
           <div className="flex flex-col">
             <span className="text-base font-bold tracking-tight">SMC Vision</span>
-            <span className="text-xs text-muted-foreground">Door & Window AR/VR</span>
+            <span className="text-xs text-muted-foreground">Door & Window AR</span>
           </div>
         </Link>
 
@@ -52,11 +51,10 @@ export function Navbar() {
 
         <div className="flex items-center space-x-3">
           <Badge variant="success" className="hidden sm:inline-flex">
-            Architecture Ready
+            AR Pipeline Ready
           </Badge>
         </div>
       </div>
     </header>
   );
 }
-

@@ -48,13 +48,6 @@ export interface ProductARConfig {
   autoRotate: boolean;
 }
 
-export interface ProductVRShowroom {
-  enabled: boolean;
-  position: { x: number; y: number; z: number };
-  rotation: { x: number; y: number; z: number };
-  featured: boolean;
-}
-
 export interface Product {
   _id: string;
   title: string;
@@ -75,9 +68,7 @@ export interface Product {
   customizable: ProductCustomizable;
   assets: ProductAssets;
   arConfig: ProductARConfig;
-  vrShowroom: ProductVRShowroom;
   status: ProductStatus;
   createdAt: string;
   updatedAt: string;
 }
-

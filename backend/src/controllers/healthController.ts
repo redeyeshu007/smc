@@ -14,11 +14,11 @@ export const getHealth = asyncHandler(async (_req: Request, res: Response) => {
   return ApiResponse.success(res, {
     statusCode: isHealthy ? 200 : 503,
     message: isHealthy
-      ? 'Door & Window Showroom API is fully operational'
-      : 'Showroom API running with degraded database connectivity',
+      ? 'AR Door & Window Showroom API is fully operational'
+      : 'AR Showroom API running with degraded database connectivity',
     data: {
       status: isHealthy ? 'healthy' : 'degraded',
-      service: 'smc-ar-vr-showroom-api',
+      service: 'smc-ar-door-window-api',
       version: '1.0.0',
       timestamp: new Date().toISOString(),
       environment: env.NODE_ENV,

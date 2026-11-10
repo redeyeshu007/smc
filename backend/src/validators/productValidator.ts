@@ -62,26 +62,6 @@ export const createProductSchema = z.object({
         autoRotate: z.boolean().default(false),
       })
       .optional(),
-    vrShowroom: z
-      .object({
-        enabled: z.boolean().default(true),
-        position: z
-          .object({
-            x: z.number().default(0),
-            y: z.number().default(0),
-            z: z.number().default(0),
-          })
-          .default({ x: 0, y: 0, z: 0 }),
-        rotation: z
-          .object({
-            x: z.number().default(0),
-            y: z.number().default(0),
-            z: z.number().default(0),
-          })
-          .default({ x: 0, y: 0, z: 0 }),
-        featured: z.boolean().default(false),
-      })
-      .optional(),
     status: z.enum(['draft', 'published', 'archived']).default('draft'),
   }),
 });
@@ -98,4 +78,3 @@ export const queryProductSchema = z.object({
     sort: z.string().optional().default('-createdAt'),
   }),
 });
-

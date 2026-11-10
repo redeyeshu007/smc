@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SMC AR/VR Door & Window Showroom',
+  title: 'SMC AR Door & Window Showroom',
   description:
-    'Modern WebXR, ARCore, and ARKit-enabled Architectural Door & Window Virtual Showroom',
+    'Modern WebXR, Android Scene Viewer, and Apple Quick Look AR-enabled Architectural Door & Window Platform',
 };
 
 export default function RootLayout({

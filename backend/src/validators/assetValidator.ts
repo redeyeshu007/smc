@@ -8,7 +8,6 @@ export const uploadAssetMetadataSchema = z.object({
     polycount: z.coerce.number().optional(),
     hasAnimations: z.coerce.boolean().optional().default(false),
     isArReady: z.coerce.boolean().optional().default(false),
-    isVrReady: z.coerce.boolean().optional().default(false),
     dimensions: z
       .object({
         width: z.coerce.number(),
@@ -27,4 +26,3 @@ export const getPresignedUrlSchema = z.object({
     format: z.enum(['glb', 'gltf', 'usdz', 'texture', 'hdr']),
   }),
 });
-
