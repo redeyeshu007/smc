@@ -40,3 +40,4 @@ export const LOCAL_UPLOADS_DIR = path.resolve(process.cwd(), 'uploads');
 if (!fs.existsSync(LOCAL_UPLOADS_DIR)) {
   fs.mkdirSync(LOCAL_UPLOADS_DIR, { recursive: true });
 }
+

@@ -33,3 +33,4 @@ export const formatPolycount = (count?: number): string => {
   }
   return `${count} tris`;
 };
+

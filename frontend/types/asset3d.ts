@@ -26,3 +26,4 @@ export interface Asset3D {
   createdAt: string;
   updatedAt: string;
 }
+

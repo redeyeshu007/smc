@@ -35,3 +35,4 @@ router
   .delete(authenticate, authorize('admin'), deleteProduct);
 
 export default router;
+

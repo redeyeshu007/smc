@@ -78,3 +78,4 @@ export const getMe = asyncHandler(async (req: any, res: Response) => {
     data: req.user,
   });
 });
+

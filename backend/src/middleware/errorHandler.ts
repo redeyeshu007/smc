@@ -53,3 +53,4 @@ export const errorHandler: ErrorRequestHandler = (
     timestamp: new Date().toISOString(),
   });
 };
+

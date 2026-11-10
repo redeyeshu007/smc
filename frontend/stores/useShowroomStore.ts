@@ -32,3 +32,4 @@ export const useShowroomStore = create<ShowroomState>((set) => ({
   setVrMode: (active) => set({ isVrModeActive: active }),
   setCameraView: (position, target) => set({ cameraPosition: position, cameraTarget: target }),
 }));
+

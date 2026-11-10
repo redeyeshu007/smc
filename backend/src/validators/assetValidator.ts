@@ -27,3 +27,4 @@ export const getPresignedUrlSchema = z.object({
     format: z.enum(['glb', 'gltf', 'usdz', 'texture', 'hdr']),
   }),
 });
+

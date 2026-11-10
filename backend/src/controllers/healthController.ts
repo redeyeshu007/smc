@@ -45,3 +45,4 @@ export const getHealth = asyncHandler(async (_req: Request, res: Response) => {
     },
   });
 });
+

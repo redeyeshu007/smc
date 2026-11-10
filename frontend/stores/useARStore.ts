@@ -49,3 +49,4 @@ export const useARStore = create<ARStoreState>((set) => ({
       productTitle: '',
     }),
 }));
+

@@ -43,3 +43,4 @@ export const uploadMiddleware = multer({
     fileSize: env.MAX_FILE_SIZE_MB * 1024 * 1024,
   },
 });
+

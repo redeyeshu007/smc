@@ -50,3 +50,4 @@ export const buildSceneViewerUrl = (
  */
 export const mmToMeters = (mm: number): number => mm / 1000;
 export const metersToMm = (meters: number): number => meters * 1000;
+

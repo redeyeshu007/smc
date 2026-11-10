@@ -39,3 +39,4 @@ export class ApiResponse {
     return res.status(204).send();
   }
 }
+

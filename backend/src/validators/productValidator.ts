@@ -98,3 +98,4 @@ export const queryProductSchema = z.object({
     sort: z.string().optional().default('-createdAt'),
   }),
 });
+

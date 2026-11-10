@@ -78,3 +78,4 @@ export function R3FCanvas({
     </div>
   );
 }
+

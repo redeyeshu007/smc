@@ -6,3 +6,4 @@ export const healthService = {
     return (await apiClient.get('/health')) as unknown as ApiResponse<HealthCheckData>;
   },
 };
+

@@ -47,3 +47,4 @@ export const deleteAsset = asyncHandler(async (req: Request, res: Response) => {
     message: 'Asset deleted successfully',
   });
 });
+

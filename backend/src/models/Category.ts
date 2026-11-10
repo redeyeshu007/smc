@@ -27,3 +27,4 @@ const CategorySchema = new Schema<ICategory>(
 );
 
 export const Category = mongoose.model<ICategory>('Category', CategorySchema);
+

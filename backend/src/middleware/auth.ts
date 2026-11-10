@@ -52,3 +52,4 @@ export const authorize = (...roles: Array<'admin' | 'staff' | 'customer'>) => {
     next();
   };
 };
+

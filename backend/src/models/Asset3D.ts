@@ -66,3 +66,4 @@ const Asset3DSchema = new Schema<IAsset3D>(
 );
 
 export const Asset3D = mongoose.model<IAsset3D>('Asset3D', Asset3DSchema);
+

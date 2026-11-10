@@ -105,3 +105,4 @@ export class Database {
 }
 
 export const db = Database.getInstance();
+

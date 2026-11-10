@@ -201,3 +201,4 @@ cd frontend
 npm run dev
 ```
 - Frontend application: `http://localhost:3000`
+

@@ -159,3 +159,4 @@ verifyDatabase().catch((err) => {
   logger.error('Verification failed:', err);
   process.exit(1);
 });
+

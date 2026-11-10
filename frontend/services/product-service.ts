@@ -24,3 +24,4 @@ export const productService = {
     return (await apiClient.get(`/products/slug/${slug}`)) as unknown as ApiResponse<Product>;
   },
 };
+

@@ -12,3 +12,4 @@ router.use('/assets', assetRoutes);
 router.use('/auth', authRoutes);
 
 export default router;
+

@@ -22,3 +22,4 @@ export interface ShowroomHotspot {
   position: [number, number, number];
   normal: [number, number, number];
 }
+

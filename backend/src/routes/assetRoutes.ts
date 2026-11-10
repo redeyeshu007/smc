@@ -41,3 +41,4 @@ router
   .delete(authenticate, authorize('admin'), deleteAsset);
 
 export default router;
+

@@ -16,3 +16,4 @@ export function useARCapabilities(): ARCapabilities {
 
   return capabilities;
 }
+

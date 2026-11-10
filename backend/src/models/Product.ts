@@ -180,3 +180,4 @@ const ProductSchema = new Schema<IProduct>(
 );
 
 export const Product = mongoose.model<IProduct>('Product', ProductSchema);
+

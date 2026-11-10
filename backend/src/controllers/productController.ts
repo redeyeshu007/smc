@@ -52,3 +52,4 @@ export const deleteProduct = asyncHandler(async (req: Request, res: Response) =>
     message: 'Product deleted successfully',
   });
 });
+
